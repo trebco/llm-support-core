@@ -518,21 +518,20 @@ function ProcessGPTResponsesChunk(params: Partial<Parameters<GPTResponsesChatMes
             case 'computer_call':
             case 'computer_call_output':
               break;
-            case 'function_call':
-
-              // create a placeholder for the tool call
-              if (!params.tool_calls) {
-                params.tool_calls = [];
-              }
-              params.tool_calls[chunk.output_index] = { 
-                name: chunk.item.name || '',
-                params: chunk.item.arguments || '',
-                index: chunk.output_index,
-              };
-
-              // fall through
-
             default:
+
+              // a tool call also gets a placeholder in tool_calls
+              if (chunk.item.type === 'function_call') {
+                if (!params.tool_calls) {
+                  params.tool_calls = [];
+                }
+                params.tool_calls[chunk.output_index] = { 
+                  name: chunk.item.name || '',
+                  params: chunk.item.arguments || '',
+                  index: chunk.output_index,
+                };
+              }
+
               /*
               params.active_messages[chunk.output_index] = 
                 messages.messages[(params.current_message_index||0) + chunk.output_index] = 

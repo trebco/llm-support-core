@@ -1,42 +1,9 @@
 
 import { Anthropic } from '@anthropic-ai/sdk';
 import OpenAI from 'openai';
-import { GoogleGenAI, type GenerateContentParameters, type Content as GeminiContent } from '@google/genai';
-import { ToolDefinition, toAnthropicTools, toGeminiFunctionDeclarations, toOpenAIChatCompletionTools, toOpenAIResponsesTools } from './tool-definition';
-import { ToolHandlerImageResponseType, ToolHandlerResponseType } from './tool-result';
-import { AnthropicChatMessages, ClientSideErrorMessage, GeminiChatMessages, GPTResponsesChatMessages, IsClientSideErrorMessage, IsNotClientSideErrorMessage } from './stream';
-import { MessageParam } from '@anthropic-ai/sdk/resources';
-
-/** helper function */
-function GenerateImageBlockContent(result: ToolHandlerImageResponseType): Anthropic.ToolResultBlockParam['content'] {
-  const content: Anthropic.ToolResultBlockParam['content'] = [];
-
-  const [header, data] = result.image_uri.split(",");
-  const media_type = header.match(/:(.*?);/)?.[1];
-
-  if (media_type !== 'image/jpeg' && media_type !== 'image/png' && media_type !== 'image/webp' && media_type !== 'image/gif') {
-    throw new Error('invalid image type');
-  }
-
-  content.push({
-    type: 'image', 
-    source: { 
-      type: 'base64', 
-      media_type, 
-      data,
-    }
-  });
-
-  if (result.content) {
-    content.push({
-      type: 'text',
-      text: JSON.stringify(result.content),
-    });
-  };
-
-  return content;
-
-}
+import { GoogleGenAI, type GenerateContentParameters } from '@google/genai';
+import { ToolDefinition, toAnthropicTools, toGeminiFunctionDeclarations, toOpenAIResponsesTools } from './tool-definition';
+import { AnthropicChatMessages, GeminiChatMessages, GPTResponsesChatMessages, IsNotClientSideErrorMessage } from './stream';
 
 /** 
  * Anthropic style stream 
@@ -80,7 +47,8 @@ export async function* StreamAnthropicResponse(
  * for the time being, we'll use store:true (the default), although
  * I'm a little edgy about that
  */
-export async function* StreamResponsesAPI(instance: OpenAI, model: string, messages: GPTResponsesChatMessages, system: string, temperature: number|undefined, max_tokens: number, tools?: ToolDefinition[]) {
+// temperature and max_tokens are accepted for symmetry with the other providers but not sent
+export async function* StreamResponsesAPI(instance: OpenAI, model: string, messages: GPTResponsesChatMessages, system: string, _temperature: number|undefined, _max_tokens: number, tools?: ToolDefinition[]) {
 
   const filtered = messages.messages.filter(IsNotClientSideErrorMessage);
   // console.info({filtered});
