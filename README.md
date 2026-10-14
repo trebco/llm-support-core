@@ -13,3 +13,13 @@ There is no build step: apps import the TypeScript source. Check this repo
 out next to the app and depend on it as `"llm-support-core":
 "file:../llm-support-core"`, installed with npm (which symlinks it, so edits
 here reach the app; restart the app's dev server if one seems missed).
+
+`Format()` renders `$…$` / `$$…$$` math with KaTeX but doesn't load KaTeX's
+stylesheet; the app must. Without it the visually-hidden MathML copy shows
+next to the rendered math ("x² x2") and the math fonts are missing. Depend on
+`katex` directly, at the version this package renders with (`npm ls katex`
+here), and import its stylesheet once, app-wide:
+
+```ts
+import 'katex/dist/katex.min.css';
+```
