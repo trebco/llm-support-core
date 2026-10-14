@@ -1,0 +1,33 @@
+{
+  "name": "llm-support-core",
+  "version": "0.1.0",
+  "type": "module",
+  "main": "src/index.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./worker": "./src/llm-worker.ts",
+    "./katex.min.css": "./src/katex.min.css",
+    "./src/*": "./src/*"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "audit": "npm audit --omit=dev --audit-level=moderate"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.95.2",
+    "@google/genai": "^1.52.0",
+    "@valibot/to-json-schema": "^1.8.0",
+    "@vscode/markdown-it-katex": "^1.1.2",
+    "highlight.js": "^11.12.0",
+    "markdown-it": "^14.3.2",
+    "markdown-it-link-attributes": "^4.0.1",
+    "openai": "^6.49.0",
+    "partial-json": "^0.1.7",
+    "valibot": "^1.5.0"
+  },
+  "devDependencies": {
+    "@types/markdown-it": "^14.2.0",
+    "@types/markdown-it-link-attributes": "^3.0.5",
+    "typescript": "^6.0.3"
+  }
+}
